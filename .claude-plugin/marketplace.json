@@ -1,0 +1,8 @@
+{
+  "name": "rdl-skills",
+  "owner": { "name": "RiLi." },
+  "metadata": { "description": "美容師のための Claude Code スキル（RiLi. Digital Labo）" },
+  "plugins": [
+    { "name": "rdl", "source": "./", "description": "美容室の動画を、選ぶだけで作る（/rdl:make）" }
+  ]
+}

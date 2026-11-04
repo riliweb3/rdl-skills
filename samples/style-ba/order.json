@@ -1,0 +1,17 @@
+{
+  "type": "style",
+  "kind": "ba",
+  "photos": {"before": "src/before.jpg", "after": "src/after.jpg"},
+  "copy": "春だけの、透けるベージュ。",
+  "salon": "hair salon SAMPLE",
+  "cta": "ご予約はプロフィールから",
+  "tempo": "normal",
+  "length": 15,
+  "textfx": ["up", "big"],
+  "trans": ["slider", "mono"],
+  "fonts": {"head": "mincho", "sub": "anton"},
+  "colors": {"bg": "#ffffff", "fg": "#0b0b0b", "accent": "#0b0b0b"},
+  "sizes": ["9:16"],
+  "name": "sample-ba",
+  "out": "out"
+}
