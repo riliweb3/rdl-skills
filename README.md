@@ -24,7 +24,7 @@
 ## 入れ方（慣れている人向け）
 Claude Code で：
 ```
-/plugin marketplace add riliweb3/riliweb3-rdl-skills
+/plugin marketplace add riliweb3/rdl-skills
 /plugin install rdl@rdl-skills
 ```
 入れたら `/rdl:setup`（最初の1回の準備）→ `/rdl:make`（動画をつくる）。
