@@ -1,7 +1,7 @@
 {
   "name": "rdl",
   "description": "美容師のための動画スキル：写真・自撮り・曲から、ビフォーアフター・スタイル紹介・告知・求人・お客様の声・爆速カット・語り動画を選ぶだけで作る。Python と ffmpeg だけで動く。",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": { "name": "RiLi." },
   "license": "MIT",
   "keywords": ["美容室", "美容師", "動画", "リール", "instagram", "hair salon"]

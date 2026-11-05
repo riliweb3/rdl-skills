@@ -64,7 +64,7 @@ def main(args):
     rep = {"sheet": str(sheet(path, every)), "seconds": round(dur, 2), "stills": st, "black": bl, "lufs": lufs, "peak_db": peak, "notes": []}
     if st: rep["notes"].append("止まって見える所があります。意図した『一瞬の静』（0.3〜0.6秒）でなければ、ゆっくり寄せる・文字を少し漂わせる")
     if bl: rep["notes"].append("真っ黒が0.3秒以上続く所があります。暗転のつもりでなければ詰める")
-    if lufs is not None and (lufs < -16 or lufs > -11): rep["notes"].append(f"音量 {lufs} LUFS。-14 前後（-16〜-11）に")
+    if lufs is not None and (lufs < -13 or lufs > -9.5): rep["notes"].append(f"音量 {lufs} LUFS。-11 前後（-13〜-9.5）に")
     if peak is not None and peak > -0.5: rep["notes"].append("音が割れる手前です（ピークを -1 dB 以下に）")
     if dur > 90: rep["notes"].append("90秒を超えています。リールは60秒以内が見られやすい")
     print(json.dumps(rep, ensure_ascii=False, indent=1))

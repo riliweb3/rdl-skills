@@ -19,6 +19,7 @@ description: RDL の動画スキルを使う前の準備（最初の1回）。�
    - **クラウド**：`sudo apt-get install -y ffmpeg`。毎回消えるので、**環境の設定スクリプト**に同じ1行を書いておくと楽、と伝える
    - numpy / pillow は `python -m pip install --user numpy pillow`
 4. もう一度 `env` を実行して `"ready": true` を確かめる
+   - `optional` に出る **文字起こし（faster-whisper）** は任意。Talk の動画を台本なしで作りたい人にだけ「入れますか？（無料・数百MB）」と聞く
 5. 試しに1本：`<このスキルのフォルダ>/../../samples/` があれば、その order.json で `board` を作って見せる（動くことの確認）
 
 ## つまずいた時

@@ -47,6 +47,8 @@ def main():
             res["ok"].append("libx264（書き出しできる）")
         except Exception:
             res["missing"].append("libx264"); res["how"]["ffmpeg"] = "H.264 で書き出せる ffmpeg を入れ直す：" + (HOW["ffmpeg"].get(w) or "")
+    try: __import__("faster_whisper"); res["ok"].append("文字起こし（faster-whisper）")
+    except ImportError: res["optional"] = {"文字起こし（Talk の台本を自動で作る・無料）": f"{Path(sys.executable).name} -m pip install --user faster-whisper"}
     res["ready"] = not res["missing"]
     print(json.dumps(res, ensure_ascii=False, indent=1))
 

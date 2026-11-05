@@ -17,7 +17,9 @@
 | **Talk** 立体テロップ | 強調語が顔の横でくるっと回る |
 | **Talk** ノウハウ解説 | 章ごとに番号つきのカード |
 
-どれも、**文字の出方・切り替えを組み合わせて**選べます（おすすめ設定あり）。フォント4種・配色6種＋自由な3色。リール（9:16）・投稿（4:5）・Google（1:1）を一度に書き出せます。
+どれも、**文字の出方・切り替えを組み合わせて**選べます（おすすめ設定あり）。フォント4種・配色6種＋自由な3色。リール（9:16）・投稿（4:5）・Google（1:1）を一度に書き出せます。音量は自動で聞きやすい大きさ（-11 LUFS）にそろえます。
+
+Talk の動画は、台本を貼るか、**無料の文字起こし（任意・faster-whisper）**でテロップの文を作れます。
 
 美容室向けのおまけ：出す前の**安心チェック**（広告で避けたい言い方・お客様の顔出しの確認）、撮り方のコツ、**投稿文とハッシュタグの下書き**、音声入力で化けやすい美容の言葉の辞書。
 
@@ -42,6 +44,7 @@ python engine/rdl.py env                      # 準備できているか
 python engine/rdl.py board samples/style-ba/order.json   # 絵コンテ
 python engine/rdl.py make  samples/style-ba/order.json   # 書き出し（--preview で速い試し）
 python engine/rdl.py check out/sample-ba_9x16.mp4         # 監督の確認
+python engine/rdl.py transcribe me.mp4                    # 文字起こし（任意：pip install faster-whisper）
 ```
 
 ## ライセンス

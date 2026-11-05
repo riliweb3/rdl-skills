@@ -4,7 +4,7 @@
 絵は numpy の float32 配列 (H, W, 3)・値は 0〜255。
 """
 from __future__ import annotations
-import math, random, subprocess, shutil
+import math, random, subprocess, shutil, json
 from dataclasses import dataclass, field
 from pathlib import Path
 import numpy as np
@@ -418,7 +418,23 @@ def kaleido(rgb):
     top = np.concatenate([q, q[:, ::-1]], 1); full = np.concatenate([top, top[::-1]], 0)
     return full[:H, :W] if full.shape[0] >= H else cover(full, 1.0, W=W, H=H)
 
-def render(tl: Timeline, out_path: Path, dur: float, music=None, music_start=0.0, preview=False, lufs=-14.0, log=print):
+LUFS = -11.0   # 声が割れない範囲で大きめ（インスタは小さい音だと聞き取りにくい）
+
+def loudnorm(inputs, graph, target=LUFS):
+    """音量を2回に分けてそろえる（1回目で測り、2回目でその分だけ上げ下げ）。1回だけだと小さめに出やすい。
+    graph は filter_complex の途中まで（最後が出力ラベル、例 "[0:a]afade=...[m];[m]"）。返すのは最後に付ける loudnorm"""
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", *inputs, "-filter_complex",
+                        graph + f"loudnorm=I={target}:TP=-1.0:LRA=20:print_format=json[a]", "-map", "[a]", "-f", "null", "-"],
+                       capture_output=True, text=True).stderr
+    try:
+        m = json.loads(r[r.rindex("{"):r.rindex("}") + 1])
+        if float(m["input_i"]) < -70: raise ValueError  # ほぼ無音
+    except (ValueError, KeyError):
+        return f"loudnorm=I={target}:TP=-1.0"
+    return (f"loudnorm=I={target}:TP=-1.0:LRA=20:measured_I={m['input_i']}:measured_TP={m['input_tp']}"
+            f":measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true")
+
+def render(tl: Timeline, out_path: Path, dur: float, music=None, music_start=0.0, preview=False, lufs=LUFS, log=print):
     """1コマずつ描いて ffmpeg に流す。音楽があれば最後1.2秒でフェードアウトし、音量をそろえる"""
     W, H = Canvas.W, Canvas.H
     sc = 0.5 if preview else 1.0
@@ -428,7 +444,9 @@ def render(tl: Timeline, out_path: Path, dur: float, music=None, music_start=0.0
         cmd += ["-ss", str(music_start), "-t", str(dur), "-i", str(music)]
     cmd += ["-vf", f"scale={ow}:{oh}", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "28" if preview else "18", "-preset", "veryfast" if preview else "medium"]
     if music:
-        cmd += ["-af", f"afade=t=out:st={max(0, dur - 1.2)}:d=1.2,loudnorm=I={lufs}:TP=-1.0", "-c:a", "aac", "-b:a", "192k", "-shortest"]
+        fade = f"afade=t=out:st={max(0, dur - 1.2)}:d=1.2"
+        ln = loudnorm(["-ss", str(music_start), "-t", str(dur), "-i", str(music)], f"[0:a]{fade}[m];[m]", lufs)
+        cmd += ["-af", f"{fade},{ln}", "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-shortest"]
     cmd += ["-movflags", "+faststart", str(out_path)]
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     n = int(round(dur * FPS))

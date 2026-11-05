@@ -2,7 +2,7 @@
 
 - 間の削り方：ffmpeg の silencedetect で無音を見つけ、話している所だけをつなぐ（前後に少し余白を残す）
 - テロップ：order["script"]（話した内容の文章。1行＝1テロップ）を、話している時間に文字数の割合で配る
-  ※ 文字起こしはしない（Claude は音を聞けない）。台本が無ければテロップなしで作る
+  ※ 台本が無い時は `rdl.py transcribe`（faster-whisper・任意）で文字起こしして script にする。それも無ければテロップなし
 - 種類（kind）
     katari：語り。強調語のところで暗転して明朝の文字だけの場面を挟む・フィルムの質感
     tele3d：立体テロップ。強調語が顔の横でくるっと回って出る・マーカーのテロップ
@@ -13,7 +13,7 @@ import re, subprocess, math
 from pathlib import Path
 import numpy as np
 from core import (Canvas, Palette, Timeline, FPS, EO, EIO, BACK, clamp, cover, text_layer, paste, band, blank,
-                  VideoReader, probe_duration, gray, look)
+                  VideoReader, probe_duration, gray, look, loudnorm, LUFS)
 from formats import Kit, fx_text, scrim, on, WHITE, INK
 
 # ---------------------------------------------------------------- 間を削る
@@ -170,10 +170,11 @@ def mux_audio(o: dict, video_path: Path, L: float):
     inputs = ["-i", str(video_path), "-i", str(o["video"])]
     if o.get("music"):
         inputs += ["-ss", str(o.get("music_start", 0)), "-i", str(o["music"])]
-        fc += f";[2:a]volume=0.12,atrim=0:{L},afade=t=out:st={max(0, L - 1.5)}:d=1.5[bgm];[voice][bgm]amix=inputs=2:duration=first:normalize=0[mix];[mix]loudnorm=I=-14:TP=-1.0[a]"
+        fc += f";[2:a]volume=0.12,atrim=0:{L},afade=t=out:st={max(0, L - 1.5)}:d=1.5[bgm];[voice][bgm]amix=inputs=2:duration=first:normalize=0[mix];[mix]"
     else:
-        fc += ";[voice]loudnorm=I=-14:TP=-1.0[a]"
+        fc += ";[voice]"
+    fc += loudnorm(inputs, fc, float(o.get("lufs", LUFS))) + "[a]"
     tmp = video_path.with_name(video_path.stem + "_tmp.mp4")
     subprocess.run(["ffmpeg", "-v", "error", "-y"] + inputs + ["-filter_complex", fc, "-map", "0:v", "-map", "[a]", "-c:v", "copy",
-                    "-c:a", "aac", "-b:a", "192k", "-t", str(L), "-movflags", "+faststart", str(tmp)], check=True)
+                    "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-t", str(L), "-movflags", "+faststart", str(tmp)], check=True)
     tmp.replace(video_path)

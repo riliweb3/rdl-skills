@@ -40,11 +40,11 @@
 | talk | `tele3d` | 立体テロップ（強調語が顔の横でくるっと回る） | 同上 | script・words・copy |
 | talk | `howto` | ノウハウ解説（`# 見出し` で番号つきの章カード） | 同上 | script（`# ` 行が章） |
 
-Talk の `script` は話した内容の文章。**1行＝1テロップ**（16〜24文字が読みやすい）。間（無音）は自動で削る。うまく削れない時は `"noise_db": -28`（大きめの雑音の部屋）〜 `-38`（静かな部屋）。
+Talk の `script` は話した内容の文章（無ければ `rdl.py transcribe` の結果を直して使う）。**1行＝1テロップ**（16〜24文字が読みやすい）。間（無音）は自動で削る。うまく削れない時は `"noise_db": -28`（大きめの雑音の部屋）〜 `-38`（静かな部屋）。
 
 ## 選べる演出
 - **textfx（文字の出方）**：`up` スッと出る／`pop` 弾む／`type` 1文字ずつ／`big` 特大はみ出し／`spin` 立体で回る／`scene` 明朝の文字場面（暗転）／`number` 番号つき／`marker` マーカー
-- **trans（切り替え）**：`black` 暗転／`wipe` ワイプ／`slider` スライダー／`zoom` 寄り／`turn` 回り込み／`flash` 赤黒フラッシュ／`mono` モノクロ反転／`kaleido` 万華鏡／`trail` 残像／`cut` そのまま
+- **trans（切り替え）**：`black` 暗転／`wipe` ワイプ／`slider` スライダー／`zoom` 寄り／`turn` 回り込み／`flash` 色フラッシュ（配色の accent → 黒 → 白。黒×赤なら赤黒、配色を変えれば色も変わる）／`mono` モノクロ反転／`kaleido` 万華鏡／`trail` 残像／`cut` そのまま
 - **fonts**：`mincho` 明朝（上品・語り）／`gothic` ゴシック（読みやすい）／`maru` 丸ゴ（やわらか）／`anton` 英字（日本語は自動でゴシック）
 - **配色の見本**：モノクロ `#0b0b0b/#ffffff/#9a9a9a`／黒×赤 `#0b0b0b/#ffffff/#e2261a`／白×黒 `#ffffff/#0b0b0b/#0b0b0b`／ベージュ `#ece5da/#1a1714/#8a6a4a`／紺×桃 `#151b3c/#ffffff/#f2a7c3`／黒×金 `#0e0d0b/#f4efe6/#c9a45c`（bg/fg/accent の順）
 

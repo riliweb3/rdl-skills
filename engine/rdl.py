@@ -5,6 +5,7 @@
   python rdl.py make   order.json [--preview]   動画を書き出す（選んだサイズ全部）
   python rdl.py check  video.mp4            監督の確認（コマ一覧・止まり・音量）
   python rdl.py beats  song.mp3 [秒]        曲の拍とサビの位置を測る
+  python rdl.py transcribe me.mp4 [--model small]  話した動画の文字起こし（任意・faster-whisper）
 
 order.json の書き方は skills/make/order.md を見る。
 """
@@ -94,7 +95,7 @@ def cmd_make(order_path, preview=False):
         f = out / f"{name}_{tag}{'_preview' if preview else ''}.mp4"
         t0 = time.time(); print(f"書き出し中：{f.name}（{L:.1f}秒）")
         music = o.get("music") if o.get("type") != "talk" else None
-        render(tl, f, L, music, o.get("music_start", 0.0), preview, lufs=float(o.get("lufs", -14)))
+        render(tl, f, L, music, o.get("music_start", 0.0), preview, lufs=float(o.get("lufs", core.LUFS)))
         if o.get("type") == "talk":
             import talk; talk.mux_audio(o, f, L)
         print(f"  できました（{time.time() - t0:.0f}秒）")
@@ -113,6 +114,8 @@ def main():
         cmd_make(sys.argv[2], "--preview" in sys.argv)
     elif c == "check":
         import check; check.main(sys.argv[2:])
+    elif c == "transcribe":
+        import transcribe; transcribe.main(sys.argv[2:])
     elif c == "beats":
         import beats
         L = float(sys.argv[3]) if len(sys.argv) > 3 else 15.0
